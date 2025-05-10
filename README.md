@@ -17,15 +17,13 @@ All exercises are intended for self-paced learning and to simulate real exam pre
 
 The repository includes tasks and examples across all core domains of the CKAD 2025 curriculum:
 
-| Domain                       | % Weight | Topics Covered                             |
-| ---------------------------- | -------- | ------------------------------------------ |
-| **1. Core Concepts**         | 13%      | Pods, Deployments, Namespaces              |
-| **2. Configuration**         | 18%      | ConfigMaps, Secrets, SecurityContext       |
-| **3. Multi-Container Pods**  | 10%      | Sidecars, Init Containers, Lifecycle Hooks |
-| **4. Observability**         | 18%      | Probes, Logging, Monitoring                |
-| **5. Pod Design**            | 20%      | Labels, Annotations, Affinity, Tolerations |
-| **6. Services & Networking** | 13%      | Services, DNS, Network Policies            |
-| **7. State Persistence**     | 8%       | Volumes, PVCs, StatefulSets                |
+| Domain  | % Weight | Topics Covered                               |
+| ------- |----------|----------------------------------------------|
+| **1. Application Environment, Configuration and Security** | 25%      | ConfigMaps, Secrets, SecurityContext         |
+| **2. Application Design and Build** | 20%      | Pods, Deployments, Sidecars, Init Containers |
+| **3. Application Deployment** | 20%      | Helm, Kustomize, Blue/Green                  |
+| **4. Services and Networking** | 20%      | Services, DNS, Network Policies              |
+| **5. Application Observability and Maintenance** | 15%      | Probes, Logging, Monitoring                  |
 
 ## 🏁 How to Use
 
