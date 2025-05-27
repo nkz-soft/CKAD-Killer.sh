@@ -34,7 +34,7 @@ The repository includes tasks and examples across all core domains of the CKAD 2
    cd CKAD-Killer.sh
    ```
 
-2. **Spin up a local Kubernetes cluster** (e.g., with Minikube, kind, or k3d).
+2. **Spin up a local Kubernetes cluster** (e.g., with Minikube, kind, or k3d). We have prepared for you a [pre-configured cluster](./k0s-ansible/README.md) for CKAD that you can deploy with Ansible.
 
 3. **Follow each scenario** in the `scenarios/` directory. Each task includes:
 

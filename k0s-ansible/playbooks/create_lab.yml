@@ -1,0 +1,23 @@
+﻿- name: Create a k0s
+  hosts: cluster
+  become: true
+  roles:
+    - role: install_k0s
+    - role: install_kubectl
+    - role: install_helm
+    - role: configure_hostname
+    - role: create_directory
+    - role: execute_script
+    - role: apply_manifest
+      
+- name: Create a exam host
+  hosts: exam
+  become: true
+  roles:
+    - role: install_kubectl      
+  tasks:
+    - name: Add cluster host mappings
+      ansible.builtin.blockinfile:
+        path: /etc/hosts
+        block: "{{ cluster_hosts_block }}"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: CKAD CLUSTER"

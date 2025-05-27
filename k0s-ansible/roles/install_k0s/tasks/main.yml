@@ -1,0 +1,55 @@
+﻿---
+
+- name: Check if k0s is already installed
+  stat:
+    path: /etc/systemd/system/k0scontroller.service
+  register: k0s_service
+  
+- name: Install required software
+  ansible.builtin.package:
+    name: unzip
+    state: present
+  when: not k0s_service.stat.exists
+
+- name: Set download directory for all users to use
+  ansible.builtin.set_fact:
+    k0s_runtime_dir: "/usr/local/bin"
+  when: not k0s_service.stat.exists
+  
+- name: Download file
+  ansible.builtin.get_url:
+    url: "https://github.com/k0sproject/k0s/releases/download/{{ k0s_version }}/k0s-{{ k0s_version }}-amd64"
+    dest: "/tmp/k0s"
+    mode: 0755
+  when: not k0s_service.stat.exists
+
+- name: Copy file to runtime directory
+  ansible.builtin.copy:
+    src: "/tmp/k0s"
+    dest: "{{ k0s_runtime_dir }}"
+    mode: 0755
+    remote_src: yes
+  when: not k0s_service.stat.exists
+
+- name: Install k0s as a service
+  command: >
+    k0s install controller --single
+  when: not k0s_service.stat.exists
+    
+- name: Start k0s as a service
+  command: >
+    k0s start
+  when: not k0s_service.stat.exists
+
+- name: Waiting for the cluster to be ready
+  shell: k0s kubectl get nodes --no-headers
+  register: out
+  retries: 30
+  delay: 5
+  until: out.rc == 0
+  when: not k0s_service.stat.exists
+  
+- name: Create a kubeconfig for the admin
+  shell: |
+    mkdir -p ~/.kube && k0s kubeconfig admin > ~/.kube/config
+  when: not k0s_service.stat.exists

@@ -1,0 +1,20 @@
+﻿- name: Download kubectl
+  get_url:
+    url: https://dl.k8s.io/release/v1.30.0/bin/linux/amd64/kubectl
+    dest: /usr/local/bin/kubectl
+    mode: '0755'
+
+- name: Ensure kubectl is executable
+  file:
+    path: /usr/local/bin/kubectl
+    mode: '0755'
+    owner: root
+    group: root
+    
+- name: Create a global alias k for kubectl
+  copy:
+    dest: /etc/profile.d/kubectl_alias.sh
+    content: |
+      #!/bin/bash
+      alias k='kubectl'
+    mode: '0755'

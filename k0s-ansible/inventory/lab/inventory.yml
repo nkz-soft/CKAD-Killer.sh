@@ -1,0 +1,31 @@
+all:
+  vars:
+    ansible_user: root
+
+  children:
+    cluster:
+      hosts:
+        ckad5601:
+        ckad7326:
+        ckad9043:
+
+    exam:
+      hosts:
+        exam-host:
+
+  hosts:
+    ckad5601:
+      ansible_host: 192.168.100.11
+      hostname: ckad5601
+
+    ckad7326:
+      ansible_host: 192.168.100.12
+      hostname: ckad7326
+
+    ckad9043:
+      ansible_host: 192.168.100.13
+      hostname: ckad9043
+
+    exam-host:
+      ansible_host: 192.168.100.10
+      hostname: exam-host

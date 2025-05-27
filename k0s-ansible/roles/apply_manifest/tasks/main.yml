@@ -1,0 +1,9 @@
+﻿- name: Apply Kubernetes manifest
+  command: >
+    kubectl apply -f {{ kube_manifest_path }}
+  register: apply_output
+  changed_when: false
+  
+- name: Show kubectl apply result
+  debug:
+    var: apply_output.stdout_lines

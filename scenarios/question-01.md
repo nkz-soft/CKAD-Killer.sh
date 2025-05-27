@@ -2,9 +2,9 @@
 
 ## 🖥️ Scenario Description
 
-Each question in the real CKAD exam is solved on a dedicated instance. This simulation uses shared instances across multiple questions. Always **return to your main terminal (**`**) using **`, then connect to the target instance using the given SSH command.
+This question involves getting a list of all namespaces in the Kubernetes cluster.
 
-**For this question, connect to instance:**
+**Connect to instance:**
 
 ```bash
 ssh ckad5601

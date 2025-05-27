@@ -2,7 +2,7 @@
 
 ## 🖥️ Scenario Description
 
-This task involves locating and extracting a token from a Kubernetes ServiceAccount's associated Secret.
+This question involves locating and extracting a token from a Kubernetes ServiceAccount's associated Secret.
 
 **Connect to instance:**
 

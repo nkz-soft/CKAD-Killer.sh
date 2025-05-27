@@ -1,0 +1,2 @@
+﻿command_shell: bash
+install_script: install.sh

@@ -1,0 +1,49 @@
+﻿- name: Check if helm is installed
+  command: helm version --short
+  register: helm_check
+  ignore_errors: yes
+  
+- name: Ensure some required packages are installed
+  apt:
+    name:
+      - curl
+      - gnupg
+      - apt-transport-https
+    state: present
+    update_cache: yes
+  when: helm_check.rc != 0
+
+- name: Add Helm GPG key
+  apt_key:
+    url: https://baltocdn.com/helm/signing.asc
+    state: present
+  when: helm_check.rc != 0    
+    
+
+- name: Add Helm APT repository
+  apt_repository:
+    repo: "deb https://baltocdn.com/helm/stable/debian/ all main"
+    state: present
+    filename: helm-stable
+  when: helm_check.rc != 0    
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+  when: helm_check.rc != 0    
+
+- name: Install Helm
+  apt:
+    name: helm
+    state: latest
+  when: helm_check.rc != 0    
+
+- name: Add Bitnami Helm repo
+  command: helm repo add bitnami https://charts.bitnami.com/bitnami
+  args:
+    creates: /root/.cache/helm/repository/bitnami-index.yaml
+  when: helm_check.rc != 0    
+
+- name: Update Helm repos
+  command: helm repo update
+  when: helm_check.rc != 0  

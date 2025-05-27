@@ -1,37 +1,32 @@
-﻿# ✅ CKAD Practice - Question 9
+﻿# ✅ CKAD Practice - Question 9: Pod to Deployment Conversion with Security Context
 
 ## 🖥️ Scenario Description
 
-This task tests your ability to use AppArmor profiles in a Kubernetes cluster and perform node-level and workload-level configuration.
+This task involves converting a standalone Pod into a managed Deployment and enhancing its security posture.
 
-### Step 1: Set context for the correct cluster
-
-```bash
-kubectl config use-context workload-prod
-```
-
-### Step 2: Connect to the target Node
+**Connect to instance:**
 
 ```bash
-ssh cluster1-node1
+ssh ckad9043
 ```
 
----
 
-## 🧩 Task Overview
+## 🧩 Task Objectives
 
-1. **Install AppArmor profile** from `/opt/course/9/profile` on Node `cluster1-node1`
-2. **Label the node** with: `security=apparmor`
-3. **Create a Deployment** named `apparmor` in the `default` namespace with:
+In the `pluto` namespace:
 
-    * One replica using image: `nginx:1.19.2`
-    * NodeSelector: `security=apparmor`
-    * Container named `c1` with the AppArmor profile enabled
-4. **Collect logs** from the Pod and write to:
+* Convert the existing Pod `holy-api` into a Deployment named `holy-api`
+* The Deployment should have **3 replicas**
+* The container's **securityContext** must include:
 
-   ```
-   /opt/course/9/logs
-   ```
+   * `allowPrivilegeEscalation: false`
+   * `privileged: false`
+* Delete the original Pod once the Deployment is working
+* Save the Deployment manifest to:
+
+```bash
+/opt/course/9/holy-api-deployment.yaml
+```
 
 ---
 
@@ -40,58 +35,53 @@ ssh cluster1-node1
 <details>
 <summary>Click to reveal solution</summary>
 
-### 1. Install AppArmor profile (on `cluster1-node1`):
+### 1. Extract and convert the Pod manifest to a Deployment:
 
 ```bash
-sudo apt-get update && sudo apt-get install -y apparmor apparmor-utils
-sudo cp /opt/course/9/profile /etc/apparmor.d/my-nginx-profile
-sudo apparmor_parser -r /etc/apparmor.d/my-nginx-profile
+kubectl get pod holy-api -n pluto -o yaml > pod.yaml
 ```
 
-### 2. Label the Node (from control plane):
+Edit the file manually or use `kubectl create deployment --dry-run=client -o yaml` as a base.
 
-```bash
-kubectl label node cluster1-node1 security=apparmor
-```
-
-### 3. Create Deployment with AppArmor annotation:
+### 2. Construct Deployment YAML with securityContext:
 
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: apparmor
-  namespace: default
+  name: holy-api
+  namespace: pluto
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: apparmor
+      app: holy-api
   template:
     metadata:
       labels:
-        app: apparmor
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/c1: localhost/my-nginx-profile
+        app: holy-api
     spec:
-      nodeSelector:
-        security: apparmor
       containers:
-      - name: c1
-        image: nginx:1.19.2
+      - name: <original-name>
+        image: <original-image>
+        ports:
+        - containerPort: <original-port>
+        securityContext:
+          allowPrivilegeEscalation: false
+          privileged: false
 ```
 
-Apply it:
+Save it:
 
 ```bash
-kubectl apply -f apparmor-deployment.yaml
+vi /opt/course/9/holy-api-deployment.yaml
+kubectl apply -f /opt/course/9/holy-api-deployment.yaml
 ```
 
-### 4. Fetch logs from the Pod:
+### 3. Delete the original Pod:
 
 ```bash
-POD_NAME=$(kubectl get pods -l app=apparmor -o jsonpath='{.items[0].metadata.name}')
-kubectl logs $POD_NAME > /opt/course/9/logs
+kubectl delete pod holy-api -n pluto
 ```
 
 </details>
@@ -100,29 +90,30 @@ kubectl logs $POD_NAME > /opt/course/9/logs
 
 ## 📁 Validation
 
-Confirm:
-
-* The Deployment is created and scheduled to the correct node
-* The AppArmor profile is active
-* The Pod logs are saved to `/opt/course/9/logs`
+Verify the Deployment is running with 3 replicas:
 
 ```bash
-kubectl get pods -o wide
-kubectl describe pod <pod-name>
-cat /opt/course/9/logs
+kubectl get deployment holy-api -n pluto
+kubectl get pods -n pluto -l app=holy-api
+```
+
+Inspect one Pod to confirm security settings:
+
+```bash
+kubectl get pod -n pluto -l app=holy-api -o jsonpath='{.items[0].spec.containers[0].securityContext}'
 ```
 
 ---
 
-## 🧹 Cleanup (Optional)
+## 🧽 Optional Cleanup
 
 ```bash
-kubectl delete deployment apparmor
-sudo rm /etc/apparmor.d/my-nginx-profile
+kubectl delete deployment holy-api -n pluto
+kubectl delete namespace pluto
 ```
 
 ---
 
 **Status:** ✅ Ready for practice
 
-**Tags:** `apparmor` `security` `deployment` `nodeSelector` `logs` `profiling`
+**Tags:** `deployment`, `pod`, `conversion`, `replicas`, `securityContext`, `namespace`

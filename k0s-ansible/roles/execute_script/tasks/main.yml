@@ -1,0 +1,16 @@
+﻿- name: Check if script exists
+  stat:
+    path: /tmp/{{ install_script }}
+  register: script_check
+  
+- name: Copy Bash scripts and manifests to remote host
+  copy:
+    src: ./../manifests/{{ hostname }}/
+    dest: /tmp
+    mode: '0755'
+    force: yes
+  when: not script_check.stat.exists
+
+- name: Execute the Bash script
+  shell: /tmp/{{ install_script }}
+  when: not script_check.stat.exists

@@ -1,0 +1,14 @@
+﻿k0s_version: v1.32.4+k0s.0
+kubectl_version: v1.32.4
+kube_manifest_path: /tmp/config.yml
+
+directories:
+  - /opt/course/1
+  - /opt/course/2
+  - /opt/course/4
+  - /opt/course/5
+  - /opt/course/6
+  - /opt/course/7
+  - /opt/course/8
+  - /opt/course/9
+    

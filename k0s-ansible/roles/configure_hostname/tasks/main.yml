@@ -1,0 +1,10 @@
+﻿- name: Set hostname
+  hostname:
+    name: "{{ hostname }}"
+
+- name: Ensure /etc/hosts entry exists
+  lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.1\.1'
+    line: "127.0.1.1 {{ hostname }}"
+    state: present
